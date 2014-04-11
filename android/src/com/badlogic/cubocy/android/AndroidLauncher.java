@@ -1,16 +1,14 @@
-
-package com.badlogic.cuboc;
+package com.badlogic.cubocy.android;
 
 import android.os.Bundle;
 
-import com.badlogic.cubocy.Cubocy;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.cubocy.Cubocy;
 
-public class Cuboc extends AndroidApplication {
-	/** Called when the activity is first created. */
+public class AndroidLauncher extends AndroidApplication {
 	@Override
-	public void onCreate (Bundle savedInstanceState) {
+	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useAccelerometer = false;
