@@ -36,7 +36,7 @@ public class OnscreenControlRenderer {
 	}
 
 	public void render () {
-		if (Gdx.app.getType() != ApplicationType.Android) return;
+		if (Gdx.app.getType() != ApplicationType.Android && Gdx.app.getType() != ApplicationType.iOS) return;
 		if (map.cube.state != Cube.CONTROLLED) {
 			batch.begin();
 			batch.draw(left, 0, 0);
