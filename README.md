@@ -1,6 +1,7 @@
 libgdx-demo-cuboc
 =================
 ![cuboc](http://i.imgur.com/kv5oq5C.png)
+
 Cuboc is a simple 2D platformer game, written for LD48. You may be interested in the [post mortem](http://www.badlogicgames.com/wordpress/?p=1861) which explains some of the crazy code.
 
 ### Running
