@@ -6,8 +6,8 @@ Cuboc is a simple 2D platformer game, written for LD48. You may be interested in
 
 ### Try it here 
   * [WebGL/Browser](http://libgdx.badlogicgames.com/demos/cuboc)
-  * [Desktop](http://libgdx.badlogicgames.com/demos/cuboc/cuboc.apk)
-  * [Android](http://libgdx.badlogicgames.com/demos/cuboc/cuboc.jar)
+  * [Desktop](http://libgdx.badlogicgames.com/demos/cuboc/cuboc.jar)
+  * [Android](http://libgdx.badlogicgames.com/demos/cuboc/cuboc.apk)
 
 ### Running
 * [Setup your development environment](https://github.com/libgdx/libgdx/wiki)
