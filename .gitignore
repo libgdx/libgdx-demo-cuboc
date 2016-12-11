@@ -22,6 +22,7 @@ libs/armeabi/
 libs/armeabi-v7a/
 libs/x86/
 gen/
+android/libs/
 .idea/
 *.ipr
 *.iws
@@ -55,6 +56,6 @@ nbactions.xml
 nb-configuration.xml
 
 ## Gradle
-
+versions.json
 .gradle
 build/

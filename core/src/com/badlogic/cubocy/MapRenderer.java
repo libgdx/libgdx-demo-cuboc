@@ -21,23 +21,23 @@ public class MapRenderer {
 	ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
 	int[][] blocks;
 	TextureRegion tile;
-	Animation bobLeft;
-	Animation bobRight;
-	Animation bobJumpLeft;
-	Animation bobJumpRight;
-	Animation bobIdleLeft;
-	Animation bobIdleRight;
-	Animation bobDead;
-	Animation zap;
+	Animation<TextureRegion> bobLeft;
+	Animation<TextureRegion> bobRight;
+	Animation<TextureRegion> bobJumpLeft;
+	Animation<TextureRegion> bobJumpRight;
+	Animation<TextureRegion> bobIdleLeft;
+	Animation<TextureRegion> bobIdleRight;
+	Animation<TextureRegion> bobDead;
+	Animation<TextureRegion> zap;
 	TextureRegion cube;
-	Animation cubeFixed;
+	Animation<TextureRegion> cubeFixed;
 	TextureRegion cubeControlled;
 	TextureRegion dispenser;
-	Animation spawn;
-	Animation dying;
+	Animation<TextureRegion> spawn;
+	Animation<TextureRegion> dying;
 	TextureRegion spikes;
-	Animation rocket;
-	Animation rocketExplosion;
+	Animation<TextureRegion> rocket;
+	Animation<TextureRegion> rocketExplosion;
 	TextureRegion rocketPad;
 	TextureRegion endDoor;
 	TextureRegion movingSpikes;
@@ -151,7 +151,7 @@ public class MapRenderer {
 	}
 
 	private void renderBob () {
-		Animation anim = null;
+		Animation<TextureRegion> anim = null;
 		boolean loop = true;
 		if (map.bob.state == Bob.RUN) {
 			if (map.bob.dir == Bob.LEFT)
