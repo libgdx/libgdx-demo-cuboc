@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +13,14 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 
 public class MapRenderer {
+
+	/** An Animation class that is set to TextureRegions for code conciseness. */
+	private static class Animation extends com.badlogic.gdx.graphics.g2d.Animation<TextureRegion> {
+		public Animation(float frameDuration, TextureRegion... keyFrames) {
+			super(frameDuration, keyFrames);
+		}
+	}
+
 	Map map;
 	OrthographicCamera cam;
 	SpriteCache cache;
