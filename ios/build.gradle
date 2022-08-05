@@ -4,7 +4,7 @@ sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "com.badlogic.cubocy.IOSLauncher"
+    mainClassName = "com.badlogic.cubocy.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build
@@ -16,7 +16,4 @@ robovm {
     archs = "thumbv7:arm64"
 }
 
-eclipse.project {
-    name = appName + "-ios"
-    natures 'org.robovm.eclipse.RoboVMNature'
-}
+eclipse.project.name = appName + "-ios"
