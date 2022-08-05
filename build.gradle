@@ -1,118 +1,118 @@
-import groovy.json.JsonSlurper
-
 buildscript {
 
-    ant.get(src: 'http://libgdx.com/service/versions.json', dest: 'versions.json')
-    def versionFile = file('versions.json')
-    def json
-    if (versionFile.exists()) {
-        json = new JsonSlurper().parseText(versionFile.text)
-    } else throw new GradleException("Unable to retrieve latest versions, please check your internet connection")
 
-    ext {
-        gdxVersion = json.libgdxRelease
-        roboVMVersion = json.robovmVersion
-        roboVMGradleVersion = json.robovmPluginVersion
-        androidToolsVersion = json.androidBuildtoolsVersion
-        androidSDKVersion = json.androidSDKVersion
-        androidGradleToolsVersion = json.androidGradleToolVersion
-        gwtVersion = json.gwtVersion
-        gwtGradleVersion = json.gwtPluginVersion
-    }
-    
     repositories {
+        google()
+        jcenter()
         mavenLocal()
         mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
+        gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-        google()
     }
-    
     dependencies {
-        classpath "org.wisepersist:gwt-gradle-plugin:$gwtGradleVersion"
-        classpath "com.android.tools.build:gradle:$androidGradleToolsVersion"
-        classpath "com.mobidevelop.robovm:robovm-gradle-plugin:$roboVMGradleVersion"
+        classpath 'org.wisepersist:gwt-gradle-plugin:1.1.16'
+        classpath 'org.gretty:gretty:3.0.7'
+        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.16'
+
+
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
-    apply plugin: "idea"
-    
-    version = "1.0"
+
+    version = '1.0'
     ext {
-        appName = "libgdx-demo-cuboc"
+        appName = "My GDX Game"
+        gdxVersion = '1.11.0'
+        roboVMVersion = '2.3.16'
+        box2DLightsVersion = '1.5'
+        ashleyVersion = '1.7.4'
+        aiVersion = '1.8.2'
+        gdxControllersVersion = '2.2.1'
     }
-    
+
     repositories {
-        mavenLocal()
-        mavenCentral()
         google()
         jcenter()
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    }
-}
-
-project(":core") {
-    apply plugin: "java"
-    
-    dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://jitpack.io" }
     }
 }
 
 project(":desktop") {
-    apply plugin: "java"
-    
+    apply plugin: "java-library"
+
+
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation project(":core")
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
     }
 }
 
 project(":android") {
-    apply plugin: "android"
+    apply plugin: "com.android.application"
 
     configurations { natives }
 
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+        implementation project(":core")
+        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+
+    }
+}
+
+project(":ios") {
+    apply plugin: "java-library"
+    apply plugin: "robovm"
+
+
+    dependencies {
+        implementation project(":core")
+        api "com.mobidevelop.robovm:robovm-rt:$roboVMVersion"
+        api "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion"
+        api "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
+
     }
 }
 
 project(":html") {
+    apply plugin: "java-library"
     apply plugin: "gwt"
     apply plugin: "war"
+    apply plugin: "org.gretty"
+
 
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-    }    
-}
+        implementation project(":core")
+        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
+        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion:sources"
 
-project(":ios") {
-    apply plugin: 'java'
-    apply plugin: 'robovm'
-
-    dependencies {
-        compile "com.mobidevelop.robovm:robovm-rt:${roboVMVersion}"
-        compile "com.mobidevelop.robovm:robovm-cocoatouch:${roboVMVersion}"
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
     }
 }
 
+project(":core") {
+    apply plugin: "java-library"
 
-tasks.eclipse.doLast {
-	delete ".project"
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+
+    }
 }

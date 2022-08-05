@@ -1,9 +1,11 @@
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.resources.srcDirs = ["../android/assets"]
+sourceSets.main.resources.srcDirs = ["../assets"]
 
 project.ext.mainClassName = "com.badlogic.cubocy.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../android/assets");
+project.ext.assetsDir = new File("../assets")
+
+import org.gradle.internal.os.OperatingSystem
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
@@ -11,6 +13,11 @@ task run(dependsOn: classes, type: JavaExec) {
     standardInput = System.in
     workingDir = project.assetsDir
     ignoreExitValue = true
+
+    if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
+        // Required to run on macOS
+        jvmArgs += "-XstartOnFirstThread"
+    }
 }
 
 task debug(dependsOn: classes, type: JavaExec) {
@@ -18,11 +25,12 @@ task debug(dependsOn: classes, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
-    ignoreExitValue true
+    ignoreExitValue = true
     debug = true
 }
 
 task dist(type: Jar) {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
@@ -33,23 +41,7 @@ task dist(type: Jar) {
     with jar
 }
 
+
 dist.dependsOn classes
 
-
-eclipse {
-    project {
-        name = appName + "-desktop"
-        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/android/assets'
-    }
-}
-
-task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
-    doLast {
-        def classpath = new XmlParser().parse(file(".classpath"))
-        new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
-        def writer = new FileWriter(file(".classpath"))
-        def printer = new XmlNodePrinter(new PrintWriter(writer))
-        printer.setPreserveWhitespace(true)
-        printer.print(classpath)
-    }
-}
+eclipse.project.name = appName + "-desktop"
