@@ -3,17 +3,16 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.1.16'
-        classpath 'org.gretty:gretty:3.0.7'
-        classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.16'
+        classpath 'org.docstr:gwt-gradle-plugin:1.1.29'
+        classpath 'org.gretty:gretty:3.1.0'
+        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.20'
 
 
     }
@@ -25,8 +24,8 @@ allprojects {
     version = '1.0'
     ext {
         appName = "My GDX Game"
-        gdxVersion = '1.11.0'
-        roboVMVersion = '2.3.16'
+        gdxVersion = '1.12.1'
+        roboVMVersion = '2.3.20'
         box2DLightsVersion = '1.5'
         ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
@@ -35,7 +34,6 @@ allprojects {
 
     repositories {
         google()
-        jcenter()
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()
