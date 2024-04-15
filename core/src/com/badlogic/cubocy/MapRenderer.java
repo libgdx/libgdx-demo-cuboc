@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
 public class MapRenderer {
@@ -28,7 +29,6 @@ public class MapRenderer {
 	Animation<TextureRegion> bobIdleLeft;
 	Animation<TextureRegion> bobIdleRight;
 	Animation<TextureRegion> bobDead;
-	Animation<TextureRegion> zap;
 	TextureRegion cube;
 	Animation<TextureRegion> cubeFixed;
 	TextureRegion cubeControlled;
@@ -43,10 +43,14 @@ public class MapRenderer {
 	TextureRegion movingSpikes;
 	TextureRegion laser;
 	FPSLogger fps = new FPSLogger();
+	float widthFactor;
+	float heightFactor;
 
 	public MapRenderer (Map map) {
 		this.map = map;
 		this.cam = new OrthographicCamera(24, 16);
+		this.widthFactor = Gdx.graphics.getBackBufferWidth() / this.cam.viewportWidth;
+		this.heightFactor = Gdx.graphics.getBackBufferHeight() / this.cam.viewportHeight;
 		this.cam.position.set(map.bob.pos.x, map.bob.pos.y, 0);
 		this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
 		this.blocks = new int[(int)Math.ceil(this.map.tiles.length / 24.0f)][(int)Math.ceil(this.map.tiles[0].length / 16.0f)];
@@ -78,33 +82,35 @@ public class MapRenderer {
 	}
 
 	private void createAnimations () {
-		this.tile = new TextureRegion(new Texture(Gdx.files.internal("data/tile.png")), 0, 0, 20, 20);
+		Texture tileTexture = new Texture(Gdx.files.internal("data/tile.png"));
+		tileTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);;
+		this.tile = new TextureRegion(tileTexture, 0, 0, 20, 20);
 		Texture bobTexture = new Texture(Gdx.files.internal("data/bob.png"));
 		TextureRegion[] split = new TextureRegion(bobTexture).split(20, 20)[0];
 		TextureRegion[] mirror = new TextureRegion(bobTexture).split(20, 20)[0];
 		for (TextureRegion region : mirror)
 			region.flip(true, false);
 		spikes = split[5];
-		bobRight = new Animation(0.1f, split[0], split[1]);
-		bobLeft = new Animation(0.1f, mirror[0], mirror[1]);
-		bobJumpRight = new Animation(0.1f, split[2], split[3]);
-		bobJumpLeft = new Animation(0.1f, mirror[2], mirror[3]);
-		bobIdleRight = new Animation(0.5f, split[0], split[4]);
-		bobIdleLeft = new Animation(0.5f, mirror[0], mirror[4]);
-		bobDead = new Animation(0.2f, split[0]);
+		bobRight = new Animation<>(0.1f, split[0], split[1]);
+		bobLeft = new Animation<>(0.1f, mirror[0], mirror[1]);
+		bobJumpRight = new Animation<>(0.1f, split[2], split[3]);
+		bobJumpLeft = new Animation<>(0.1f, mirror[2], mirror[3]);
+		bobIdleRight = new Animation<>(0.5f, split[0], split[4]);
+		bobIdleLeft = new Animation<>(0.5f, mirror[0], mirror[4]);
+		bobDead = new Animation<>(0.2f, split[0]);
 		split = new TextureRegion(bobTexture).split(20, 20)[1];
 		cube = split[0];
-		cubeFixed = new Animation(1, split[1], split[2], split[3], split[4], split[5]);
+		cubeFixed = new Animation<>(1, split[1], split[2], split[3], split[4], split[5]);
 		split = new TextureRegion(bobTexture).split(20, 20)[2];
 		cubeControlled = split[0];
-		spawn = new Animation(0.1f, split[4], split[3], split[2], split[1]);
-		dying = new Animation(0.1f, split[1], split[2], split[3], split[4]);
+		spawn = new Animation<>(0.1f, split[4], split[3], split[2], split[1]);
+		dying = new Animation<>(0.1f, split[1], split[2], split[3], split[4]);
 		dispenser = split[5];
 		split = new TextureRegion(bobTexture).split(20, 20)[3];
-		rocket = new Animation(0.1f, split[0], split[1], split[2], split[3]);
+		rocket = new Animation<>(0.1f, split[0], split[1], split[2], split[3]);
 		rocketPad = split[4];
 		split = new TextureRegion(bobTexture).split(20, 20)[4];
-		rocketExplosion = new Animation(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
+		rocketExplosion = new Animation<>(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
 		split = new TextureRegion(bobTexture).split(20, 20)[5];
 		endDoor = split[2];
 		movingSpikes = split[0];
@@ -119,6 +125,10 @@ public class MapRenderer {
 			cam.position.lerp(lerpTarget.set(map.bob.pos.x, map.bob.pos.y, 0), 2f * deltaTime);
 		else
 			cam.position.lerp(lerpTarget.set(map.cube.pos.x, map.cube.pos.y, 0), 2f * deltaTime);
+		cam.position.set(
+				MathUtils.round(cam.position.x * widthFactor) / widthFactor,
+				MathUtils.round(cam.position.y * heightFactor) / heightFactor,
+				cam.position.z);
 		cam.update();
 
 		renderLaserBeams();
@@ -126,12 +136,10 @@ public class MapRenderer {
 		cache.setProjectionMatrix(cam.combined);
 		Gdx.gl.glDisable(GL20.GL_BLEND);
 		cache.begin();
-		int b = 0;
-		for (int blockY = 0; blockY < 4; blockY++) {
+        for (int blockY = 0; blockY < 4; blockY++) {
 			for (int blockX = 0; blockX < 6; blockX++) {
 				cache.draw(blocks[blockX][blockY]);
-				b++;
-			}
+            }
 		}
 		cache.end();
 		stateTime += deltaTime;
@@ -151,7 +159,7 @@ public class MapRenderer {
 	}
 
 	private void renderBob () {
-		Animation<TextureRegion> anim = null;
+		Animation<TextureRegion> anim = bobIdleRight;
 		boolean loop = true;
 		if (map.bob.state == Bob.RUN) {
 			if (map.bob.dir == Bob.LEFT)
@@ -194,7 +202,7 @@ public class MapRenderer {
 			Rocket rocket = map.rockets.get(i);
 			if (rocket.state == Rocket.FLYING) {
 				TextureRegion frame = this.rocket.getKeyFrame(rocket.stateTime, true);
-				batch.draw(frame, rocket.pos.x, rocket.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, rocket.vel.angle());
+				batch.draw(frame, rocket.pos.x, rocket.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, rocket.vel.angleDeg());
 			} else {
 				TextureRegion frame = this.rocketExplosion.getKeyFrame(rocket.stateTime, false);
 				batch.draw(frame, rocket.pos.x, rocket.pos.y, 1, 1);
