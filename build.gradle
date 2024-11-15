@@ -23,7 +23,7 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = "My GDX Game"
+        appName = "libgdx-demo-cuboc"
         gdxVersion = '1.12.1'
         roboVMVersion = '2.3.20'
         box2DLightsVersion = '1.5'
